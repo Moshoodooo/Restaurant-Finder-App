@@ -1,0 +1,1 @@
+{"root":["../db.ts","../prisma/seed.ts","../src/app.ts","../src/index.ts","../src/main.ts","../src/controllers/utils/hash.ts","../src/routes/auth.ts","../src/routes/restaurants.ts"],"errors":true,"version":"5.8.3"}

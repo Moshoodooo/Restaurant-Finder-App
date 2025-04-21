@@ -1,0 +1,22 @@
+﻿# Ignore node_modules folder
+node_modules
+
+# Ignore logs
+*.log
+
+# Ignore local environment files
+.env
+
+# Ignore git-related files
+.git
+.gitignore
+
+# Ignore Docker-related files
+Dockerfile
+docker-compose.yml
+
+# Ignore the build folder if you're not using it
+/build
+
+# Ignore any other files/folders you don't want to include in the image
+.vscode/
