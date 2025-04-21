@@ -11,10 +11,12 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Linking,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -40,6 +42,7 @@ export default function Restaurants() {
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  const [mapLink, setMapLink] = useState<string>('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -54,20 +57,19 @@ export default function Restaurants() {
         const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
         const lat = location.coords.latitude;
         const lon = location.coords.longitude;
+        setMapLink(`https://www.google.com/maps?q=${lat},${lon}`);
 
         const geocodeRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${OPENCAGE_API_KEY}`);
         const geocodeData = await geocodeRes.json();
         const result = geocodeData.results?.[0]?.components;
         const formattedLocation = [
-          result?.neighbourhood,
-          result?.suburb,
-          result?.city || result?.town || result?.village,
-          result?.state,
-          result?.country,
-        ].filter(Boolean).join(', ');
-        setUserLocation(formattedLocation || 'Unknown');
+          result?.city || result?.town || result?.village || 'N/A',
+          result?.state || 'N/A',
+          result?.country || 'N/A'
+        ].join(', ');
+        setUserLocation(formattedLocation);
 
-        const searchUrl = `https://api.foursquare.com/v3/places/search?ll=${lat},${lon}&radius=10000&limit=27`;
+        const searchUrl = `https://api.foursquare.com/v3/places/search?ll=${lat},${lon}&radius=30000&limit=27&categories=13065`;
         const res = await fetch(searchUrl, {
           headers: {
             Accept: 'application/json',
@@ -110,12 +112,21 @@ export default function Restaurants() {
 
   const filteredRestaurants = restaurants.filter(r => r.name.toLowerCase().includes(search.toLowerCase()));
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} color="#ff6600" />;
+  if (loading) return <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} color="#007aff" />;
 
   const ListHeader = () => (
     <View style={styles.headerContainer}>
-      <Text style={styles.header}>🍽️ Nearby Restaurants</Text>
-      <Text style={styles.subHeader}>📍 You are at: <Text style={styles.locationText}>{userLocation}</Text></Text>
+      <Text style={styles.newHeader}>Nearby Restaurants</Text>
+      <View style={styles.locationCard}>
+        <Ionicons name="location-outline" size={18} color="#1e3a8a" style={{ marginRight: 6, marginTop: 2 }} />
+        <Text style={styles.cardText}>You're here:</Text>
+      </View>
+      <Text style={styles.locationDetails}>{userLocation}</Text>
+      {mapLink ? (
+        <TouchableOpacity onPress={() => Linking.openURL(mapLink)}>
+          <Text style={styles.mapLink}>View on Map</Text>
+        </TouchableOpacity>
+      ) : null}
       <View style={styles.searchBox}>
         <Ionicons name="search" size={20} color="#666" style={{ marginHorizontal: 8 }} />
         <TextInput
@@ -129,31 +140,33 @@ export default function Restaurants() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fdf6f0' }}>
-      <FlatList
-        data={filteredRestaurants}
-        keyExtractor={(item) => item.fsq_id}
-        contentContainerStyle={styles.grid}
-        ListHeaderComponent={<ListHeader />}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('details', { restaurant: item })}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: item.logoUrl || 'https://via.placeholder.com/400x200.png?text=Restaurant' }}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.info}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.address}>{item.location.address}, {item.location.locality}</Text>
-              <Text style={styles.meta}>{item.categories.map(c => c.name).join(', ')}</Text>
-              <Text style={styles.meta}>🚶 {(item.distance / 1000).toFixed(2)} km away</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
-    </SafeAreaView>
+    <LinearGradient colors={['#f8fbff', '#e0ecff']} style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          data={filteredRestaurants}
+          keyExtractor={(item) => item.fsq_id}
+          contentContainerStyle={styles.grid}
+          ListHeaderComponent={<ListHeader />}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.tile} onPress={() => navigation.navigate('details', { restaurant: item })}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: item.logoUrl || 'https://via.placeholder.com/400x200.png?text=Restaurant' }}
+                  style={styles.image}
+                />
+              </View>
+              <View style={styles.info}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.address}>{item.location.address}, {item.location.locality}</Text>
+                <Text style={styles.meta}>{item.categories.map(c => c.name).join(', ')}</Text>
+                <Text style={styles.meta}>{(item.distance / 1000).toFixed(2)} km away</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -161,32 +174,46 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingTop: 20,
     paddingBottom: 10,
-    backgroundColor: '#fdf6f0',
+    paddingHorizontal: 16,
+    alignItems: 'center',
   },
-  header: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginHorizontal: 16,
+  newHeader: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1e3a8a',
+    marginBottom: 8,
+    letterSpacing: 1.2,
+  },
+  locationCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#dbeafe',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 14,
     marginBottom: 4,
-    color: '#333',
-    textAlign: 'center',
   },
-  subHeader: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 12,
-    marginHorizontal: 16,
+  cardText: {
+    color: '#1e3a8a',
+    fontSize: 13.5,
+    fontWeight: '500',
   },
-  locationText: {
-    color: '#000',
-    fontWeight: '600',
+  locationDetails: {
+    fontSize: 13,
+    color: '#1e40af',
+    marginBottom: 4,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  mapLink: {
+    fontSize: 13,
+    color: '#2563eb',
+    marginBottom: 10,
+    textDecorationLine: 'underline',
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 12,
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 8,
@@ -195,11 +222,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
+    width: '100%',
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
-    paddingVertical: 4,
     color: '#333',
   },
   grid: {
@@ -208,15 +235,19 @@ const styles = StyleSheet.create({
   },
   tile: {
     backgroundColor: '#fff',
-    borderRadius: 18,
+    borderRadius: 20,
     margin: 6,
     width: (width / 2) - 20,
-    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    overflow: 'hidden',
   },
   imageContainer: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     overflow: 'hidden',
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
   },
   image: {
     width: '100%',

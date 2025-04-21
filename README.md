@@ -1,50 +1,107 @@
-# Welcome to your Expo app 👋
+# 📱 Restaurant Finder App - Full Stack Assessment
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile-friendly, location-based restaurant discovery application built with **React Native (Expo)** for the frontend and **ExpressJS + PostgreSQL** for the backend (partially implemented). This project was developed for the Full Stack Mobile Developer assessment at **Kenkeputa**.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Tech Stack
 
-   ```bash
-   npm install
-   ```
+### Frontend
 
-2. Start the app
+- **React Native (Expo) + Expo Go**
+- **expo-router** for file-based routing
+- **Foursquare API** for restaurant discovery
+- **OpenCage API** for reverse geocoding
+- **React Navigation** for in-app navigation
 
-   ```bash
-    npx expo start
-   ```
+### Backend *(Partially Implemented)*
 
-In the output, you'll find options to open the app in a
+- **ExpressJS** with **PostgreSQL**
+- Docker-based infrastructure
+- Basic route scaffolding, login stub only
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 📲 Core Features Implemented
 
-## Get a fresh project
+- 🌍 **Geolocation**-based restaurant listing
+- 🔎 **Search** for restaurants by name
+- 🗂️ Basic **Search screen** filters available restaurants
+- 📍 Google Maps integration for user's location
+- 📘 Restaurant **details** page with contact, rating, amenities
+- 👤 User **Register** and **Profile** screens designed (not connected)
+- 💾 Hardcoded **authentication** for testing
 
-When you're ready, run:
+---
+
+## 🛠️ How to Run
+
+### 1. Prerequisites
+
+- Install Expo Go on your mobile device
+- Install dependencies:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- Start the app:
 
-## Learn more
+```bash
+npx expo start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+- Scan QR with Expo Go to launch on your mobile
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Login Credentials
 
-## Join the community
+> These are **hardcoded** for demonstration purposes due to backend limitations:
 
-Join our community of developers creating universal apps.
+```
+Email:    user@example.com
+Password: password
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🧠 Architectural Decisions
+
+- Chose **Expo Router** for scalable navigation
+- Integrated **Foursquare** for reliable restaurant data
+- Separated views into clear pages: `login`, `home`, `restaurant`, `details`, `search`, `register`, `profile`
+- Utilized `AsyncStorage` to simulate token-based login flow
+
+---
+
+## ⚠️ Known Limitations
+
+- Backend is not yet fully integrated
+- Register/Profile pages not wired to backend
+- Login is mock-only
+- No cuisine or price filters yet
+- No user favorites/profile management
+
+---
+
+## 🌱 Future Improvements
+
+- ✅ Full backend implementation with PostgreSQL
+- 🔐 JWT-based auth + user registration
+- 🗂️ Implement cuisine & price filters
+- ❤️ User favorites & saved restaurants
+- 🔍 Advanced search with tags and location radius
+- 🧪 Unit and integration testing
+
+---
+
+## 📎 Submission
+
+Please find this repository at: [GitHub Repo Link Here]
+
+For any inquiries or support, feel free to reach out.
+
+---
+
+**Submitted by:** Moshood Oyeniran  
+[Email: moshoodoyeniran09@gmail.com](mailto:moshoodoyeniran09@gmail.com)
+

@@ -42,8 +42,8 @@ export default function Profile() {
             source={{ uri: 'https://img.icons8.com/color/96/user-male-circle.png' }}
             style={styles.avatar}
           />
-          <Text style={styles.name}>{username || 'John Doe'}</Text>
-          <Text style={styles.email}>{email || 'john.doe@example.com'}</Text>
+          <Text style={styles.name}>{username || 'Moshood Oyeniran'}</Text>
+          <Text style={styles.email}>{email || 'moshoodoyeniran09@gmail.com'}</Text>
 
           <View style={styles.buttonContainer}>
             <Pressable style={styles.button} onPress={() => router.push('/edit-profile')}>
