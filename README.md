@@ -96,7 +96,7 @@ Password: password
 
 ## 📎 Submission
 
-Please find this repository at: [GitHub Repo Link Here]
+Please find this repository at: [🔗 https://github.com/Moshoodooo/Restaurant-Finder-App.git]
 
 For any inquiries or support, feel free to reach out.
 
